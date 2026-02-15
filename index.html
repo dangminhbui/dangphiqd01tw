@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công Cụ Tính Đảng Phí 2026 - PADEMY PRO (Chuẩn QĐ 01/TW)</title>
+    <title>Công Cụ Tính Đảng Phí 2026 - PADEMY PRO</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,8 +34,6 @@
         .table-head { @apply bg-gray-100 text-xs font-bold text-gray-700 uppercase tracking-wider py-4 px-4 border-b text-left sticky top-0; }
         .table-cell { @apply py-3 px-4 text-sm text-gray-700 border-b whitespace-nowrap; }
         .card-stat { @apply bg-white p-5 rounded-xl shadow-sm border border-gray-100; }
-        
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
@@ -101,15 +99,30 @@
                         </p>
                     </div>
 
-                    <div class="flex-1">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">
-                            <i class="fa-solid fa-sitemap text-partyRed mr-1"></i> Loại hình Chi bộ:
-                        </label>
-                        <select id="branchType" onchange="updateLabels()" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-partyRed focus:ring focus:ring-red-200 p-2.5">
-                            <option value="70">Thôn, Tổ dân phố, Đặc thù (Giữ 70%)</option>
-                            <option value="50">Cơ quan, Doanh nghiệp, ĐVSN (Giữ 50%)</option>
-                        </select>
-                        <p class="text-xs text-gray-500 mt-2">Quyết định tỷ lệ phân bổ.</p>
+                    <div class="flex-1 space-y-3">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">
+                                <i class="fa-solid fa-sitemap text-partyRed mr-1"></i> Loại hình Chi bộ (Điều 6):
+                            </label>
+                            <select id="branchType" onchange="updateLabels()" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-partyRed focus:ring focus:ring-red-200 p-2.5 text-sm">
+                                <optgroup label="1. Trong nước">
+                                    <option value="dom_70">Chi bộ Thôn, TDP, Sinh viên... (Giữ 70%)</option>
+                                    <option value="dom_50">Chi bộ Cơ quan, DN, ĐVSN (Giữ 50%)</option>
+                                </optgroup>
+                                <optgroup label="2. Ở Nước ngoài (Điều 6.2)">
+                                    <option value="overseas_50">Chi bộ trực thuộc ĐU nước sở tại (Giữ 50%)</option>
+                                    <option value="overseas_70">Chi bộ/ĐU nước sở tại (Giữ 70%)</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <!-- Checkbox Đảng ủy bộ phận -->
+                        <div id="partCommContainer" class="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200">
+                            <input type="checkbox" id="hasPartComm" onchange="updateLabels()" class="w-4 h-4 text-partyRed rounded focus:ring-partyRed">
+                            <label for="hasPartComm" class="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                                Trực thuộc Đảng ủy bộ phận?
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -135,7 +148,7 @@
                 </button>
             </div>
 
-            <!-- Right Panel: Parameters -->
+            <!-- Right Panel: Rules -->
             <div class="lg:col-span-4 space-y-6">
                 <!-- Wage Params -->
                 <div class="bg-gray-900 text-white rounded-xl shadow-lg p-6 border border-gray-700">
@@ -153,7 +166,7 @@
                 <!-- Allocation Rules -->
                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
                     <h3 class="font-bold text-blue-800 mb-4 uppercase text-sm tracking-wider border-b border-blue-200 pb-2">
-                        Quy tắc Phân bổ
+                        Nguyên tắc Phân bổ (Điều 6)
                     </h3>
                     <div class="space-y-4 text-xs text-blue-900" id="allocationRuleText">
                         <!-- Dynamic Text will be inserted here -->
@@ -188,17 +201,17 @@
                     <p class="text-2xl font-black text-blue-600 mt-1 tracking-tight" id="valRetain1">0</p>
                     <p class="text-[10px] text-gray-400 font-bold mt-1">Để lại hoạt động</p>
                 </div>
-                <!-- Cap tren truc tiep -->
+                <!-- Cap trung gian -->
                 <div class="card-stat border-t-4 border-indigo-500">
-                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblRetain2">3. VP Đảng Ủy Xã</p>
+                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblRetain2">3. Cấp trung gian</p>
                     <p class="text-2xl font-black text-indigo-600 mt-1 tracking-tight" id="valRetain2">0</p>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">Giữ 70% số nộp lên</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">ĐU Bộ phận / VP ĐU Xã</p>
                 </div>
-                <!-- Cap cao hon -->
+                <!-- Cap tren -->
                 <div class="card-stat border-t-4 border-green-600">
-                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblSubmit">4. Nộp lên Tỉnh ủy</p>
+                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblSubmit">4. Nộp lên Cấp trên</p>
                     <p class="text-2xl font-black text-green-600 mt-1 tracking-tight" id="valSubmit">0</p>
-                    <p class="text-[10px] text-gray-400 font-bold mt-1">Phần còn lại</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Tỉnh ủy / Cấp trên trực tiếp</p>
                 </div>
             </div>
 
@@ -215,8 +228,8 @@
                                 <th class="table-head">Diễn giải cách tính</th>
                                 <th class="table-head text-right text-partyRed">Phải đóng</th>
                                 <th class="table-head text-right text-blue-600" id="thRetain1">CB Giữ</th>
-                                <th class="table-head text-right text-indigo-600" id="thRetain2">ĐU Xã</th>
-                                <th class="table-head text-right text-green-600" id="thSubmit">Tỉnh Ủy</th>
+                                <th class="table-head text-right text-indigo-600" id="thRetain2">Trung gian</th>
+                                <th class="table-head text-right text-green-600" id="thSubmit">Cấp trên</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody" class="divide-y divide-gray-100">
@@ -316,63 +329,91 @@
         // 3. UPDATE LABELS DYNAMICALLY
         function updateLabels() {
             const branchType = document.getElementById('branchType').value;
+            const hasPartComm = document.getElementById('hasPartComm').checked;
             const container = document.getElementById('allocationRuleText');
             
+            // Elements to update
+            const partCommContainer = document.getElementById('partCommContainer');
             const lbl2 = document.getElementById('lblRetain2');
             const lbl3 = document.getElementById('lblSubmit');
             const th2 = document.getElementById('thRetain2');
             const th3 = document.getElementById('thSubmit');
 
-            if (branchType === "70") {
-                container.innerHTML = `
-                    <div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ <span class="font-bold text-blue-700">70%</span> tổng thu.</p></div>
-                    <div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>VP Đảng ủy Xã:</strong> Giữ <span class="font-bold text-indigo-700">70%</span> số nộp lên.</p></div>
-                    <div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Huyện ủy:</strong> Nhận <span class="font-bold text-green-700">30%</span> còn lại.</p></div>
-                `;
-                lbl2.innerText = "3. VP Đảng Ủy Xã";
-                lbl3.innerText = "4. Nộp lên Huyện ủy";
-                th2.innerText = "ĐU Xã";
-                th3.innerText = "Huyện Ủy";
+            // Show/Hide Part Comm Checkbox based on type
+            if (branchType.startsWith('overseas')) {
+                partCommContainer.classList.add('hidden');
+                document.getElementById('hasPartComm').checked = false; 
             } else {
-                container.innerHTML = `
-                    <div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ <span class="font-bold text-blue-700">50%</span> tổng thu.</p></div>
-                    <div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>Đảng ủy Cơ sở:</strong> Giữ <span class="font-bold text-indigo-700">70%</span> số nộp lên.</p></div>
-                    <div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Cấp trên Cơ sở:</strong> Nhận <span class="font-bold text-green-700">30%</span> còn lại.</p></div>
-                `;
-                lbl2.innerText = "3. Đảng Ủy Cơ Sở";
-                lbl3.innerText = "4. Nộp Cấp Trên";
-                th2.innerText = "ĐU Cơ Sở";
-                th3.innerText = "Cấp Trên";
+                partCommContainer.classList.remove('hidden');
             }
+
+            // Logic for Labels
+            if (branchType === "dom_70") {
+                // Thôn/TDP (70%)
+                container.innerHTML = `<div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ 70% tổng thu.</p></div>`;
+                if (hasPartComm) {
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>Đảng ủy bộ phận:</strong> Giữ 30% số còn lại.</p></div>`;
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Nộp về ĐU Cơ sở:</strong> Phần còn lại.</p></div>`;
+                    lbl2.innerText = "3. Đảng ủy Bộ Phận"; th2.innerText = "ĐU Bộ Phận";
+                    lbl3.innerText = "4. Nộp về ĐU Cơ Sở"; th3.innerText = "Nộp ĐU CS";
+                } else {
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>VP Đảng ủy Xã:</strong> Giữ 70% số nộp lên.</p></div>`;
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Nộp Tỉnh ủy:</strong> Phần còn lại.</p></div>`;
+                    lbl2.innerText = "3. VP Đảng Ủy Xã"; th2.innerText = "VP ĐU Xã";
+                    lbl3.innerText = "4. Nộp lên Tỉnh ủy"; th3.innerText = "Nộp Tỉnh";
+                }
+            } else if (branchType === "dom_50") {
+                // Cơ quan/DN (50%)
+                container.innerHTML = `<div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ 50% tổng thu.</p></div>`;
+                if (hasPartComm) {
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>Đảng ủy bộ phận:</strong> Giữ 30% số còn lại.</p></div>`;
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Nộp về ĐU Cơ sở:</strong> Phần còn lại.</p></div>`;
+                    lbl2.innerText = "3. Đảng ủy Bộ Phận"; th2.innerText = "ĐU Bộ Phận";
+                    lbl3.innerText = "4. Nộp về ĐU Cơ Sở"; th3.innerText = "Nộp ĐU CS";
+                } else {
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>Đảng ủy cơ sở:</strong> Giữ 70% số nộp lên.</p></div>`;
+                    container.innerHTML += `<div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Nộp lên Cấp trên:</strong> Phần còn lại.</p></div>`;
+                    lbl2.innerText = "3. Đảng Ủy Cơ Sở"; th2.innerText = "ĐU Cơ Sở";
+                    lbl3.innerText = "4. Nộp lên Cấp Trên"; th3.innerText = "Nộp Cấp Trên";
+                }
+            } else if (branchType === "overseas_50") {
+                container.innerHTML = `<div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ TT:</strong> Giữ 50%.</p></div><div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">2</div><p><strong>Nộp lên:</strong> 50% (ĐU nước sở tại).</p></div>`;
+                lbl2.innerText = "3. (Không áp dụng)"; th2.innerText = "-";
+                lbl3.innerText = "4. Nộp ĐU Nước sở tại"; th3.innerText = "ĐU Sở tại";
+            } else if (branchType === "overseas_70") {
+                container.innerHTML = `<div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>ĐU sở tại:</strong> Giữ 70%.</p></div><div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">2</div><p><strong>Nộp lên:</strong> 30% (ĐU Bộ Ngoại giao).</p></div>`;
+                lbl2.innerText = "3. (Không áp dụng)"; th2.innerText = "-";
+                lbl3.innerText = "4. Nộp ĐU Bộ Ngoại giao"; th3.innerText = "ĐU BNG";
+            }
+
             if (originalData.length > 0) calculate();
         }
 
         // 4. GENERATE SAMPLE EXCEL
         function downloadSample() {
-            const headers = ["STT", "Họ và tên", "Năm sinh", "Nhóm đối tượng", "Mức thu nhập căn cứ", "Khu vực LTT", "Diện chính sách"];
+            const headers = ["STT", "Họ và tên", "Năm sinh", "Nhóm đối tượng", "Mức thu nhập căn cứ", "Khu vực LTT", "Diện chính sách", "Ghi chú"];
             const sampleData = [
-                [1, "Nguyễn Văn A", 1985, "BHXH", 12000000, "I", ""],
-                [2, "Trần Thị B", 1960, "Hưu trí", 6500000, "I", ""],
-                [3, "Lê Văn C", 2005, "HSSV", 0, "II", ""],
-                [4, "Phạm Văn D", 1995, "Tự do", 0, "IV", ""],
-                [5, "Hoàng Thị E", 1955, "Tự do", 0, "IV", "Miễn"],
-                [6, "Vũ Văn G", 1950, "Tự do", 0, "IV", "Giảm 30%"], // Logic mới: Giảm tùy ý
-                [7, "Ngô Thị H", 1990, "Tự do", 0, "IV", "Giảm 50%"],
+                [1, "Nguyễn Văn A", 1985, "BHXH", 12000000, "I", "", ""],
+                [2, "Trần Thị B", 1990, "BHXH", 0, "I", "", "Nghỉ không lương"],
+                [3, "Lê Văn C", 2005, "HSSV", 0, "II", "", ""],
+                [4, "Phạm Văn D", 1995, "Nước ngoài", 20000000, "", "", "Công tác"],
+                [5, "Hoàng Thị E", 1955, "Tự do", 0, "IV", "Miễn", ""],
+                [6, "Vũ Văn G", 1950, "Tự do", 0, "IV", "Giảm 30%", ""],
+                [7, "Ngô Thị H", 1992, "BHXH", 5000000, "I", "", "Thai sản (Trợ cấp)"],
             ];
             const guide = [
                 ["HƯỚNG DẪN NHẬP LIỆU CHUẨN"],
                 ["Cột", "Yêu cầu nhập"],
-                ["Nhóm đối tượng", "Chỉ nhập: BHXH, Hưu trí, Tự do, HSSV (hoặc Sinh viên)"],
-                ["Mức thu nhập", "Nhập số tiền lương BHXH hoặc lương hưu (hoặc tiền trợ cấp thai sản). Nếu Tự do thì để trống."],
-                ["Khu vực LTT", "Nhập: I, II, III hoặc IV."],
-                ["Diện chính sách", "Nhập: 'Miễn', 'Giảm 50%', 'Giảm 30%', 'Giảm 70%'... (Nhập rõ số %)"],
+                ["Nhóm đối tượng", "Chỉ nhập: BHXH, Hưu trí, Tự do, HSSV, Nước ngoài"],
+                ["Mức thu nhập", "Nhập Lương BHXH / Lương hưu / Trợ cấp ốm đau thai sản / Thu nhập ở nước ngoài."],
+                ["Ghi chú", "Nếu nghỉ không lương, hãy ghi 'không lương' để tính theo LTT Vùng."],
+                ["Diện chính sách", "Nhập: 'Miễn', 'Giảm 30%', 'Giảm 50%', 'Giảm 70%'..."],
                 ["Năm sinh", "BẮT BUỘC NHẬP để hệ thống tự tính tuổi nghỉ hưu."]
             ];
 
             const ws = XLSX.utils.aoa_to_sheet([headers, ...sampleData]);
             const wsGuide = XLSX.utils.aoa_to_sheet(guide);
-            ws['!cols'] = [{wch:5}, {wch:25}, {wch:10}, {wch:15}, {wch:20}, {wch:10}, {wch:15}];
-            
+            ws['!cols'] = [{wch:5}, {wch:25}, {wch:10}, {wch:15}, {wch:20}, {wch:10}, {wch:15}, {wch:20}];
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Mau_Nhap_Lieu");
             XLSX.utils.book_append_sheet(wb, wsGuide, "Huong_Dan");
@@ -397,7 +438,8 @@
         // 6. CALCULATION CORE (UPDATED: Điều 3, 4, 5)
         function calculate() {
             const isPhase2 = checkPhase(); 
-            const branchKeepPct = parseInt(document.getElementById('branchType').value) / 100;
+            const branchType = document.getElementById('branchType').value;
+            const hasPartComm = document.getElementById('hasPartComm').checked;
             const currentYear = new Date().getFullYear();
             const rateActive = isPhase2 ? 0.005 : 0.003;
             const rateRetired = isPhase2 ? 0.003 : 0.002;
@@ -409,6 +451,7 @@
                 if (!name) return null; 
 
                 const groupRaw = String(row['Nhóm đối tượng'] || row['Đối tượng'] || "").toUpperCase();
+                const noteRaw = String(row['Ghi chú'] || "").toUpperCase();
                 const income = parseFloat(String(row['Mức thu nhập căn cứ'] || row['Thu nhập'] || "0").replace(/[^0-9]/g, '')) || 0;
                 const region = String(row['Khu vực LTT'] || row['Khu vực'] || "IV").toUpperCase().trim();
                 const policy = String(row['Diện chính sách'] || row['Chính sách'] || "").toUpperCase();
@@ -423,18 +466,25 @@
                 let formula = "";
                 let baseFee = 0;
 
-                // --- A. Base Calculation (Điều 3, 4) ---
+                // A. Base Calculation
                 if (groupRaw.includes("BHXH") || groupRaw.includes("LƯƠNG")) {
-                    baseFee = income * 0.01;
-                    formula = "1% Lương BHXH (hoặc Trợ cấp)";
+                    if (noteRaw.includes("KHÔNG LƯƠNG")) {
+                        baseFee = wage * rateActive; 
+                        formula = "Nghỉ không lương (Tính theo LTT Vùng)";
+                    } else {
+                        baseFee = income * 0.01;
+                        formula = noteRaw.includes("THAI SẢN") || noteRaw.includes("ỐM") ? "1% Trợ cấp BHXH" : "1% Lương BHXH";
+                    }
                 } else if (groupRaw.includes("HƯU")) {
                     baseFee = income * 0.005;
                     formula = "0.5% Lương Hưu";
                 } else if (groupRaw.includes("SINH VIÊN") || groupRaw.includes("HSSV")) {
                     baseFee = STUDENT_FEE;
                     formula = "Cố định HSSV";
+                } else if (groupRaw.includes("NƯỚC NGOÀI")) {
+                    baseFee = income * 0.01; 
+                    formula = "1% Thu nhập tại nước ngoài";
                 } else {
-                    // Freelance (Tự do/Thất nghiệp) - Tính theo LTT Vùng
                     const age = currentYear - birthYear;
                     const isRetired = (birthYear > 0 && age >= 60) || groupRaw.includes("NGOÀI") || groupRaw.includes("GIÀ") || groupRaw.includes("HƯU");
                     if (isRetired) {
@@ -446,36 +496,56 @@
                     }
                 }
 
-                // --- B. Policy Logic (Điều 5 - Flexible Reduction) ---
+                // B. Policy Logic
                 fee = baseFee;
-                
-                // 1. Exemption (Miễn 100%)
                 if (policy.includes("MIỄN") || policy.includes("NGHÈO") || policy.includes("100%")) {
-                    fee = 0;
-                    formula += " (Miễn 100%)";
-                } 
-                // 2. Reduction (Giảm 30%, 50%, 70%...)
-                else if (policy.includes("GIẢM") || policy.includes("BẢO TRỢ") || policy.includes("CÓ CÔNG")) {
-                    let reductionPercent = 50; // Default fallback if no number found
-                    
-                    // Regex find number in string (e.g., "GIẢM 70%" -> 70)
+                    fee = 0; formula += " (Miễn 100%)";
+                } else if (policy.includes("GIẢM") || policy.includes("BẢO TRỢ") || policy.includes("CÓ CÔNG")) {
+                    let reductionPercent = 50; 
                     const match = policy.match(/(\d{1,3})/);
-                    if (match) {
-                        reductionPercent = parseFloat(match[0]);
-                    }
-                    
+                    if (match) reductionPercent = parseFloat(match[0]);
                     const payPercent = 100 - reductionPercent;
                     fee = baseFee * (payPercent / 100);
                     formula += ` (Giảm ${reductionPercent}%)`;
                 }
-
                 fee = Math.round(fee);
+
+                // C. ALLOCATION LOGIC (FIXED AS REQUESTED)
+                let keep1 = 0, keep2 = 0, submit = 0;
                 
-                // --- C. Allocation ---
-                const keep1 = Math.round(fee * branchKeepPct);
-                const remainder1 = fee - keep1;
-                const keep2 = Math.round(remainder1 * 0.7);
-                const submit = remainder1 - keep2;
+                // Case 1: Thôn/TDP (70%)
+                if (branchType === "dom_70") {
+                    keep1 = Math.round(fee * 0.7);
+                    let remainder1 = fee - keep1;
+                    if (hasPartComm) {
+                        // Có ĐU Bộ phận -> ĐU BP giữ 30% số dư, còn lại về ĐU Cơ sở
+                        keep2 = Math.round(remainder1 * 0.3);
+                        submit = remainder1 - keep2;
+                    } else {
+                        // Không có ĐU Bộ phận -> VP ĐU Xã giữ 70% số dư, còn lại nộp Tỉnh
+                        keep2 = Math.round(remainder1 * 0.7);
+                        submit = remainder1 - keep2;
+                    }
+                } 
+                // Case 2: Cơ quan (50%)
+                else if (branchType === "dom_50") {
+                    keep1 = Math.round(fee * 0.5);
+                    let remainder1 = fee - keep1;
+                    if (hasPartComm) {
+                        keep2 = Math.round(remainder1 * 0.3);
+                        submit = remainder1 - keep2;
+                    } else {
+                        keep2 = Math.round(remainder1 * 0.7);
+                        submit = remainder1 - keep2;
+                    }
+                } 
+                // Case 3: Nước ngoài
+                else if (branchType.startsWith("overseas")) {
+                    const pct = branchType === "overseas_70" ? 0.7 : 0.5;
+                    keep1 = Math.round(fee * pct);
+                    submit = fee - keep1;
+                    keep2 = 0; 
+                }
 
                 gTotalFee += fee; gTotalKeep1 += keep1; gTotalKeep2 += keep2; gTotalSubmit += submit;
 
@@ -489,7 +559,6 @@
             renderUI(gTotalFee, gTotalKeep1, gTotalKeep2, gTotalSubmit);
         }
 
-        // 7. RENDER UI
         function renderUI(total, r1, r2, sub) {
             document.getElementById('resultSection').classList.remove('hidden');
             document.getElementById('valTotal').innerText = total.toLocaleString('vi-VN');
@@ -497,7 +566,7 @@
             document.getElementById('valRetain2').innerText = r2.toLocaleString('vi-VN');
             document.getElementById('valSubmit').innerText = sub.toLocaleString('vi-VN');
             
-            const pct = document.getElementById('branchType').value;
+            const pct = document.getElementById('branchType').value.includes("70") ? "70" : "50";
             document.getElementById('lblRetain1').innerText = `2. Chi bộ giữ (${pct}%)`;
 
             const tbody = document.getElementById('tableBody');
@@ -516,7 +585,6 @@
             `).join('');
         }
 
-        // 8. EXPORT EXCEL
         function exportExcel() {
             const lbl2 = document.getElementById('lblRetain2').innerText.replace("3. ", "");
             const lbl3 = document.getElementById('lblSubmit').innerText.replace("4. ", "");
