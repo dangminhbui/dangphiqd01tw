@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công Cụ Tính Đảng Phí 2026 - PADEMY PRO (Chuẩn QĐ 01/TW)</title>
+    
+    <!-- Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        partyRed: '#DA251D',
+                        partyYellow: '#FFD500',
+                        partyDark: '#8B0000',
+                        pademy: '#2563eb',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; }
+        .table-head { @apply bg-gray-100 text-xs font-bold text-gray-700 uppercase tracking-wider py-4 px-4 border-b text-left sticky top-0; }
+        .table-cell { @apply py-3 px-4 text-sm text-gray-700 border-b whitespace-nowrap; }
+        .card-stat { @apply bg-white p-5 rounded-xl shadow-sm border border-gray-100; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-gray-800">
+
+    <!-- HEADER & BRANDING -->
+    <header class="bg-white border-b-4 border-partyRed shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-6">
+                    <img src="https://i.postimg.cc/4d0PH133/LOGO-01.png" alt="Pademy Logo" class="h-16 w-auto object-contain hover:scale-105 transition duration-300">
+                    <div class="h-12 w-px bg-gray-300 hidden md:block"></div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-partyRed uppercase leading-tight tracking-tight">Hệ Thống Tính Đảng Phí</h2>
+                        <p class="text-xs text-gray-500 font-semibold">Chuẩn Quy định 01-QĐ/TW (2026)</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-end text-sm">
+                    <a href="mailto:dangminhbui.111@gmail.com" class="text-gray-600 hover:text-partyRed font-medium transition mb-1">
+                        <i class="fa-solid fa-envelope mr-2"></i> dangminhbui.111@gmail.com
+                    </a>
+                    <div class="flex flex-col md:flex-row gap-2 md:gap-6 text-xs md:text-sm text-right mt-1">
+                        <span class="bg-green-50 text-green-700 px-2 py-1 rounded border border-green-200 font-bold">
+                            <i class="fa-solid fa-phone mr-1"></i> Trợ lý: 0832.34.34.16
+                        </span>
+                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200 font-bold">
+                            <i class="fa-solid fa-chalkboard-user mr-1"></i> Đào tạo: 0888.93.44.94
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- DISCLAIMER ALERT -->
+    <div class="bg-yellow-50 border-b border-yellow-200 text-yellow-800 text-center py-2 px-4 text-sm font-medium">
+        <i class="fa-solid fa-triangle-exclamation mr-2"></i>
+        Đây là phiên bản dùng thử, các đồng chí hãy thử dùng và để lại góp ý cho Minh qua email để Minh tối ưu phiên bản tốt hơn. Xin cảm ơn!
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- SECTION 1: CẤU HÌNH & UPLOAD -->
+        <div id="inputSection" class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
+            
+            <!-- Left Panel: Config & Upload (8 cols) -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Config Bar -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">
+                            <i class="fa-regular fa-calendar-days text-partyRed mr-1"></i> Kỳ nộp Đảng phí:
+                        </label>
+                        <input type="date" id="calcDate" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-partyRed focus:ring focus:ring-red-200 p-2.5 font-medium" onchange="checkPhase()">
+                        <p id="phaseAlert" class="text-xs mt-2 font-bold text-blue-600">
+                            <i class="fa-solid fa-circle-check"></i> Đang áp dụng công thức Giai đoạn 1 (Trước 2028)
+                        </p>
+                    </div>
+
+                    <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">
+                            <i class="fa-solid fa-sitemap text-partyRed mr-1"></i> Loại hình Chi bộ:
+                        </label>
+                        <select id="branchType" onchange="updateLabels()" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-partyRed focus:ring focus:ring-red-200 p-2.5">
+                            <option value="70">Thôn, Tổ dân phố, Đặc thù (Giữ 70%)</option>
+                            <option value="50">Cơ quan, Doanh nghiệp, ĐVSN (Giữ 50%)</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-2">Quyết định tỷ lệ phân bổ.</p>
+                    </div>
+                </div>
+
+                <!-- Upload Box -->
+                <div class="bg-white rounded-xl shadow-sm border-2 border-dashed border-partyRed/30 hover:border-partyRed p-8 text-center transition group cursor-pointer relative">
+                    <input type="file" id="fileInput" accept=".xlsx, .xls" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="processFile(event)">
+                    <div class="group-hover:scale-105 transition duration-300">
+                        <div class="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-partyRed shadow-inner">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800">Tải lên File Excel Tổng Hợp</h3>
+                        <p class="text-gray-500 mt-2 font-medium">Kéo thả hoặc Click để chọn file .xlsx</p>
+                    </div>
+                </div>
+
+                <!-- Download Button -->
+                <button onclick="downloadSample()" class="w-full bg-green-600 hover:bg-green-700 text-white border-2 border-green-700 font-bold py-4 px-6 rounded-lg shadow-lg transition duration-200 flex items-center justify-center gap-3 group animate-pulse-slow">
+                    <i class="fa-solid fa-file-excel text-2xl group-hover:scale-110 transition"></i>
+                    <div class="text-left">
+                        <span class="block text-base font-extrabold uppercase">TẢI MẪU EXCEL CHUẨN</span>
+                        <span class="block text-xs font-normal opacity-90">Bắt buộc dùng mẫu này để tính đúng</span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Right Panel: Parameters -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- Wage Params -->
+                <div class="bg-gray-900 text-white rounded-xl shadow-lg p-6 border border-gray-700">
+                    <h3 class="font-bold text-partyYellow mb-4 uppercase text-sm tracking-wider border-b border-gray-700 pb-2">
+                        Lương Tối Thiểu (NĐ 293)
+                    </h3>
+                    <div class="space-y-3 text-sm font-mono">
+                        <div class="flex justify-between items-center"><span class="text-gray-400">Vùng I</span> <span class="font-bold text-white bg-gray-800 px-2 rounded">5.310.000</span></div>
+                        <div class="flex justify-between items-center"><span class="text-gray-400">Vùng II</span> <span class="font-bold text-white bg-gray-800 px-2 rounded">4.730.000</span></div>
+                        <div class="flex justify-between items-center"><span class="text-gray-400">Vùng III</span> <span class="font-bold text-white bg-gray-800 px-2 rounded">4.140.000</span></div>
+                        <div class="flex justify-between items-center"><span class="text-partyRed font-bold">Vùng IV</span> <span class="font-bold text-partyYellow bg-gray-800 px-2 rounded border border-partyYellow">3.700.000</span></div>
+                    </div>
+                </div>
+
+                <!-- Allocation Rules -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                    <h3 class="font-bold text-blue-800 mb-4 uppercase text-sm tracking-wider border-b border-blue-200 pb-2">
+                        Quy tắc Phân bổ
+                    </h3>
+                    <div class="space-y-4 text-xs text-blue-900" id="allocationRuleText">
+                        <!-- Dynamic Text will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: KẾT QUẢ TÍNH TOÁN -->
+        <div id="resultSection" class="hidden">
+            
+            <div class="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-gray-800 border-l-8 border-partyRed pl-4">Kết Quả & Phân Bổ</h2>
+                
+                <!-- Export Button -->
+                <button onclick="exportExcel()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center gap-2 transform hover:-translate-y-1">
+                    <i class="fa-solid fa-file-excel text-lg"></i> Xuất Báo Cáo Excel
+                </button>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Total -->
+                <div class="card-stat border-t-4 border-partyRed bg-gradient-to-b from-red-50 to-white">
+                    <p class="text-xs font-bold text-gray-500 uppercase">1. Tổng Thực Thu</p>
+                    <p class="text-2xl font-black text-partyRed mt-1 tracking-tight" id="valTotal">0</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">VNĐ</p>
+                </div>
+                <!-- Chi bo -->
+                <div class="card-stat border-t-4 border-blue-500">
+                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblRetain1">2. Chi bộ giữ lại</p>
+                    <p class="text-2xl font-black text-blue-600 mt-1 tracking-tight" id="valRetain1">0</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Để lại hoạt động</p>
+                </div>
+                <!-- Cap tren truc tiep -->
+                <div class="card-stat border-t-4 border-indigo-500">
+                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblRetain2">3. VP Đảng Ủy Xã</p>
+                    <p class="text-2xl font-black text-indigo-600 mt-1 tracking-tight" id="valRetain2">0</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Giữ 70% số nộp lên</p>
+                </div>
+                <!-- Cap cao hon -->
+                <div class="card-stat border-t-4 border-green-600">
+                    <p class="text-xs font-bold text-gray-500 uppercase" id="lblSubmit">4. Nộp lên Tỉnh ủy</p>
+                    <p class="text-2xl font-black text-green-600 mt-1 tracking-tight" id="valSubmit">0</p>
+                    <p class="text-[10px] text-gray-400 font-bold mt-1">Phần còn lại</p>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto max-h-[600px]">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="table-head w-10 text-center">STT</th>
+                                <th class="table-head">Họ và tên</th>
+                                <th class="table-head">Đối tượng (Gốc)</th>
+                                <th class="table-head">Chính sách</th>
+                                <th class="table-head">Diễn giải cách tính</th>
+                                <th class="table-head text-right text-partyRed">Phải đóng</th>
+                                <th class="table-head text-right text-blue-600" id="thRetain1">CB Giữ</th>
+                                <th class="table-head text-right text-indigo-600" id="thRetain2">ĐU Xã</th>
+                                <th class="table-head text-right text-green-600" id="thSubmit">Tỉnh Ủy</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-gray-100">
+                            <!-- JS Generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-white pt-12 pb-6 mt-12 border-t-8 border-partyYellow">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 text-center md:text-left">
+                <!-- Brand -->
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="flex items-center gap-3 mb-4 bg-white/10 p-3 rounded-lg">
+                        <img src="https://i.postimg.cc/4d0PH133/LOGO-01.png" alt="Pademy Logo" class="h-10 w-auto bg-white rounded p-0.5">
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed font-light">
+                        <strong class="text-white">Minh AI</strong> - Đồng hành cùng công chức/viên chức trong công tác ứng dụng AI vào thực tiễn công việc hiệu quả.
+                    </p>
+                </div>
+
+                <!-- Contact -->
+                <div class="flex flex-col items-center">
+                    <h4 class="font-bold text-partyYellow mb-6 uppercase tracking-widest text-xs border-b border-gray-700 pb-2 w-full text-center">Liên hệ hỗ trợ</h4>
+                    <ul class="space-y-4 text-sm text-gray-300 w-full max-w-xs">
+                        <li class="hover:text-white transition flex items-center gap-3 bg-gray-800 p-2 rounded">
+                            <i class="fa-solid fa-envelope text-gray-400"></i> dangminhbui.111@gmail.com
+                        </li>
+                        <li class="hover:text-white transition flex items-center gap-3 bg-gray-800 p-2 rounded">
+                            <i class="fa-solid fa-phone text-green-500"></i> 
+                            <div><span class="text-xs text-gray-500 block">Trợ lý</span> <strong>0832.34.34.16</strong></div>
+                        </li>
+                        <li class="hover:text-white transition flex items-center gap-3 bg-gray-800 p-2 rounded">
+                            <i class="fa-solid fa-chalkboard-user text-blue-400"></i> 
+                            <div><span class="text-xs text-gray-500 block">Đào tạo</span> <strong>0888.93.44.94</strong></div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Social -->
+                <div class="flex flex-col items-center md:items-end">
+                    <h4 class="font-bold text-partyYellow mb-6 uppercase tracking-widest text-xs border-b border-gray-700 pb-2 w-full text-right">Kết nối với Minh</h4>
+                    <a href="https://www.tiktok.com/@minh_ai_" target="_blank" class="flex items-center gap-3 bg-black border border-gray-700 hover:border-white px-5 py-3 rounded-full transition group">
+                        <i class="fa-brands fa-tiktok text-2xl group-hover:text-partyRed transition"></i>
+                        <div class="text-left">
+                            <span class="block text-[10px] text-gray-400 uppercase">Follow on TikTok</span>
+                            <span class="block font-bold">@minh_ai_</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-6 text-center text-xs text-gray-500">
+                &copy; 2026 Developed by Minh AI. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // 1. CONSTANTS (NĐ 293)
+        const WAGES = { 'I': 5310000, 'II': 4730000, 'III': 4140000, 'IV': 3700000 };
+        const STUDENT_FEE = 5000;
+        let originalData = [];
+        let computedData = [];
+        let gTotalFee = 0; let gTotalKeep1 = 0; let gTotalKeep2 = 0; let gTotalSubmit = 0;
+
+        // Init
+        window.onload = function() {
+            document.getElementById('calcDate').valueAsDate = new Date();
+            checkPhase();
+            updateLabels(); // Set initial labels
+        }
+
+        // 2. CHECK PHASE (2028 Logic)
+        function checkPhase() {
+            const dateVal = document.getElementById('calcDate').value;
+            const year = new Date(dateVal).getFullYear();
+            const alertBox = document.getElementById('phaseAlert');
+            
+            if (year >= 2028) {
+                alertBox.innerHTML = '<i class="fa-solid fa-bolt text-partyRed"></i> Đang áp dụng: <strong>Giai đoạn 2 (Sau 2028)</strong>';
+                alertBox.className = "text-xs mt-2 font-bold text-partyRed animate-pulse";
+                return true;
+            } else {
+                alertBox.innerHTML = '<i class="fa-solid fa-circle-check"></i> Đang áp dụng: <strong>Giai đoạn 1 (Trước 2028)</strong>';
+                alertBox.className = "text-xs mt-2 font-bold text-blue-600";
+                return false;
+            }
+        }
+
+        // 3. UPDATE LABELS DYNAMICALLY
+        function updateLabels() {
+            const branchType = document.getElementById('branchType').value;
+            const container = document.getElementById('allocationRuleText');
+            
+            const lbl2 = document.getElementById('lblRetain2');
+            const lbl3 = document.getElementById('lblSubmit');
+            const th2 = document.getElementById('thRetain2');
+            const th3 = document.getElementById('thSubmit');
+
+            if (branchType === "70") {
+                container.innerHTML = `
+                    <div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ <span class="font-bold text-blue-700">70%</span> tổng thu.</p></div>
+                    <div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>VP Đảng ủy Xã:</strong> Giữ <span class="font-bold text-indigo-700">70%</span> số nộp lên.</p></div>
+                    <div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Huyện ủy:</strong> Nhận <span class="font-bold text-green-700">30%</span> còn lại.</p></div>
+                `;
+                lbl2.innerText = "3. VP Đảng Ủy Xã";
+                lbl3.innerText = "4. Nộp lên Huyện ủy";
+                th2.innerText = "ĐU Xã";
+                th3.innerText = "Huyện Ủy";
+            } else {
+                container.innerHTML = `
+                    <div class="flex gap-3"><div class="bg-blue-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-blue-800 shrink-0">1</div><p><strong>Chi bộ:</strong> Giữ <span class="font-bold text-blue-700">50%</span> tổng thu.</p></div>
+                    <div class="flex gap-3"><div class="bg-indigo-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-indigo-800 shrink-0">2</div><p><strong>Đảng ủy Cơ sở:</strong> Giữ <span class="font-bold text-indigo-700">70%</span> số nộp lên.</p></div>
+                    <div class="flex gap-3"><div class="bg-green-200 w-6 h-6 rounded-full flex items-center justify-center font-bold text-green-800 shrink-0">3</div><p><strong>Cấp trên Cơ sở:</strong> Nhận <span class="font-bold text-green-700">30%</span> còn lại.</p></div>
+                `;
+                lbl2.innerText = "3. Đảng Ủy Cơ Sở";
+                lbl3.innerText = "4. Nộp Cấp Trên";
+                th2.innerText = "ĐU Cơ Sở";
+                th3.innerText = "Cấp Trên";
+            }
+            if (originalData.length > 0) calculate();
+        }
+
+        // 4. GENERATE SAMPLE EXCEL
+        function downloadSample() {
+            const headers = ["STT", "Họ và tên", "Năm sinh", "Nhóm đối tượng", "Mức thu nhập căn cứ", "Khu vực LTT", "Diện chính sách"];
+            const sampleData = [
+                [1, "Nguyễn Văn A", 1985, "BHXH", 12000000, "I", ""],
+                [2, "Trần Thị B", 1960, "Hưu trí", 6500000, "I", ""],
+                [3, "Lê Văn C", 2005, "HSSV", 0, "II", ""],
+                [4, "Phạm Văn D", 1995, "Tự do", 0, "IV", ""],
+                [5, "Hoàng Thị E", 1955, "Tự do", 0, "IV", "Miễn"],
+                [6, "Vũ Văn G", 1950, "Tự do", 0, "IV", "Giảm 30%"], // Logic mới: Giảm tùy ý
+                [7, "Ngô Thị H", 1990, "Tự do", 0, "IV", "Giảm 50%"],
+            ];
+            const guide = [
+                ["HƯỚNG DẪN NHẬP LIỆU CHUẨN"],
+                ["Cột", "Yêu cầu nhập"],
+                ["Nhóm đối tượng", "Chỉ nhập: BHXH, Hưu trí, Tự do, HSSV (hoặc Sinh viên)"],
+                ["Mức thu nhập", "Nhập số tiền lương BHXH hoặc lương hưu (hoặc tiền trợ cấp thai sản). Nếu Tự do thì để trống."],
+                ["Khu vực LTT", "Nhập: I, II, III hoặc IV."],
+                ["Diện chính sách", "Nhập: 'Miễn', 'Giảm 50%', 'Giảm 30%', 'Giảm 70%'... (Nhập rõ số %)"],
+                ["Năm sinh", "BẮT BUỘC NHẬP để hệ thống tự tính tuổi nghỉ hưu."]
+            ];
+
+            const ws = XLSX.utils.aoa_to_sheet([headers, ...sampleData]);
+            const wsGuide = XLSX.utils.aoa_to_sheet(guide);
+            ws['!cols'] = [{wch:5}, {wch:25}, {wch:10}, {wch:15}, {wch:20}, {wch:10}, {wch:15}];
+            
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Mau_Nhap_Lieu");
+            XLSX.utils.book_append_sheet(wb, wsGuide, "Huong_Dan");
+            XLSX.writeFile(wb, "Mau_Tinh_Dang_Phi_Chuan_2026.xlsx");
+        }
+
+        // 5. PROCESS UPLOAD
+        function processFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const data = new Uint8Array(evt.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                originalData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {defval: ""});
+                if (originalData.length === 0) return alert("File trống hoặc sai định dạng!");
+                calculate();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // 6. CALCULATION CORE (UPDATED: Điều 3, 4, 5)
+        function calculate() {
+            const isPhase2 = checkPhase(); 
+            const branchKeepPct = parseInt(document.getElementById('branchType').value) / 100;
+            const currentYear = new Date().getFullYear();
+            const rateActive = isPhase2 ? 0.005 : 0.003;
+            const rateRetired = isPhase2 ? 0.003 : 0.002;
+
+            gTotalFee = 0; gTotalKeep1 = 0; gTotalKeep2 = 0; gTotalSubmit = 0;
+
+            computedData = originalData.map((row, index) => {
+                const name = row['Họ và tên'] || row['Họ tên'] || row['Tên'];
+                if (!name) return null; 
+
+                const groupRaw = String(row['Nhóm đối tượng'] || row['Đối tượng'] || "").toUpperCase();
+                const income = parseFloat(String(row['Mức thu nhập căn cứ'] || row['Thu nhập'] || "0").replace(/[^0-9]/g, '')) || 0;
+                const region = String(row['Khu vực LTT'] || row['Khu vực'] || "IV").toUpperCase().trim();
+                const policy = String(row['Diện chính sách'] || row['Chính sách'] || "").toUpperCase();
+                const birthYear = parseInt(row['Năm sinh']) || 0;
+                
+                let wage = WAGES['IV'];
+                if (region.includes('I') && !region.includes('II')) wage = WAGES['I'];
+                else if (region.includes('II')) wage = WAGES['II'];
+                else if (region.includes('III')) wage = WAGES['III'];
+
+                let fee = 0;
+                let formula = "";
+                let baseFee = 0;
+
+                // --- A. Base Calculation (Điều 3, 4) ---
+                if (groupRaw.includes("BHXH") || groupRaw.includes("LƯƠNG")) {
+                    baseFee = income * 0.01;
+                    formula = "1% Lương BHXH (hoặc Trợ cấp)";
+                } else if (groupRaw.includes("HƯU")) {
+                    baseFee = income * 0.005;
+                    formula = "0.5% Lương Hưu";
+                } else if (groupRaw.includes("SINH VIÊN") || groupRaw.includes("HSSV")) {
+                    baseFee = STUDENT_FEE;
+                    formula = "Cố định HSSV";
+                } else {
+                    // Freelance (Tự do/Thất nghiệp) - Tính theo LTT Vùng
+                    const age = currentYear - birthYear;
+                    const isRetired = (birthYear > 0 && age >= 60) || groupRaw.includes("NGOÀI") || groupRaw.includes("GIÀ") || groupRaw.includes("HƯU");
+                    if (isRetired) {
+                        baseFee = wage * rateRetired;
+                        formula = `${(rateRetired*100).toFixed(1)}% LTT Vùng ${region} (Hưu/Già)`;
+                    } else {
+                        baseFee = wage * rateActive;
+                        formula = `${(rateActive*100).toFixed(1)}% LTT Vùng ${region} (Trong tuổi)`;
+                    }
+                }
+
+                // --- B. Policy Logic (Điều 5 - Flexible Reduction) ---
+                fee = baseFee;
+                
+                // 1. Exemption (Miễn 100%)
+                if (policy.includes("MIỄN") || policy.includes("NGHÈO") || policy.includes("100%")) {
+                    fee = 0;
+                    formula += " (Miễn 100%)";
+                } 
+                // 2. Reduction (Giảm 30%, 50%, 70%...)
+                else if (policy.includes("GIẢM") || policy.includes("BẢO TRỢ") || policy.includes("CÓ CÔNG")) {
+                    let reductionPercent = 50; // Default fallback if no number found
+                    
+                    // Regex find number in string (e.g., "GIẢM 70%" -> 70)
+                    const match = policy.match(/(\d{1,3})/);
+                    if (match) {
+                        reductionPercent = parseFloat(match[0]);
+                    }
+                    
+                    const payPercent = 100 - reductionPercent;
+                    fee = baseFee * (payPercent / 100);
+                    formula += ` (Giảm ${reductionPercent}%)`;
+                }
+
+                fee = Math.round(fee);
+                
+                // --- C. Allocation ---
+                const keep1 = Math.round(fee * branchKeepPct);
+                const remainder1 = fee - keep1;
+                const keep2 = Math.round(remainder1 * 0.7);
+                const submit = remainder1 - keep2;
+
+                gTotalFee += fee; gTotalKeep1 += keep1; gTotalKeep2 += keep2; gTotalSubmit += submit;
+
+                return {
+                    ...row,
+                    _fee: fee, _keep1: keep1, _keep2: keep2, _submit: submit, _formula: formula,
+                    _stt: index + 1, _name: name, _group: groupRaw, _policy: policy
+                };
+            }).filter(item => item !== null);
+
+            renderUI(gTotalFee, gTotalKeep1, gTotalKeep2, gTotalSubmit);
+        }
+
+        // 7. RENDER UI
+        function renderUI(total, r1, r2, sub) {
+            document.getElementById('resultSection').classList.remove('hidden');
+            document.getElementById('valTotal').innerText = total.toLocaleString('vi-VN');
+            document.getElementById('valRetain1').innerText = r1.toLocaleString('vi-VN');
+            document.getElementById('valRetain2').innerText = r2.toLocaleString('vi-VN');
+            document.getElementById('valSubmit').innerText = sub.toLocaleString('vi-VN');
+            
+            const pct = document.getElementById('branchType').value;
+            document.getElementById('lblRetain1').innerText = `2. Chi bộ giữ (${pct}%)`;
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = computedData.map(d => `
+                <tr class="hover:bg-gray-50 border-b border-gray-100 transition group">
+                    <td class="table-cell text-center text-gray-500">${d._stt}</td>
+                    <td class="table-cell font-bold text-gray-800 group-hover:text-partyRed transition">${d._name}</td>
+                    <td class="table-cell text-gray-600">${d._group}</td>
+                    <td class="table-cell text-blue-600 font-medium text-xs">${d._policy}</td>
+                    <td class="table-cell text-xs italic text-gray-500">${d._formula}</td>
+                    <td class="table-cell text-right font-bold text-partyRed bg-red-50/30">${d._fee.toLocaleString()}</td>
+                    <td class="table-cell text-right text-blue-600">${d._keep1.toLocaleString()}</td>
+                    <td class="table-cell text-right text-indigo-600">${d._keep2.toLocaleString()}</td>
+                    <td class="table-cell text-right text-green-600 font-bold">${d._submit.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        // 8. EXPORT EXCEL
+        function exportExcel() {
+            const lbl2 = document.getElementById('lblRetain2').innerText.replace("3. ", "");
+            const lbl3 = document.getElementById('lblSubmit').innerText.replace("4. ", "");
+
+            const exportData = [];
+            computedData.forEach(d => {
+                const row = {};
+                Object.keys(d).forEach(key => {
+                    if (!key.startsWith('_') && !key.startsWith('__EMPTY')) row[key] = d[key];
+                });
+                row["SỐ TIỀN PHẢI ĐÓNG"] = d._fee;
+                row["CHI BỘ GIỮ LẠI"] = d._keep1;
+                row[lbl2.toUpperCase()] = d._keep2; 
+                row[lbl3.toUpperCase()] = d._submit; 
+                row["GHI CHÚ TÍNH TOÁN"] = d._formula;
+                exportData.push(row);
+            });
+
+            const sumRow = { "STT": "", "Họ và tên": "TỔNG CỘNG", "SỐ TIỀN PHẢI ĐÓNG": gTotalFee, 
+                             "CHI BỘ GIỮ LẠI": gTotalKeep1 };
+            sumRow[lbl2.toUpperCase()] = gTotalKeep2;
+            sumRow[lbl3.toUpperCase()] = gTotalSubmit;
+            exportData.push(sumRow);
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "KetQua_PhanBo");
+            XLSX.writeFile(wb, "BaoCao_DangPhi_PhanBo_ChiTiet.xlsx");
+        }
+    </script>
+</body>
+</html>
